@@ -46,6 +46,7 @@ def makeView(data, userCanvas, compCanvas):
     usergd= test.testGrid()
     drawGrid(data, userCanvas, usergd, True)
     drawGrid(data, compCanvas, data["computerboard"], False)
+    print(data["computerboard"])
     return
 
 
@@ -148,7 +149,17 @@ Parameters: 2D list of ints
 Returns: bool
 '''
 def isVertical(ship):
-    return
+    ship.sort()
+    for i in ship:        
+        x = i[1]
+        for j in ship:
+            y = j[1]
+            if i[0] == j[0] or i[0]== j[0]-1 or i[0] == j[0]-2:
+                if x != y:           
+                    return False
+            else:
+                return False
+        return True
 
 
 '''
@@ -307,8 +318,8 @@ def runSimulation(w, h):
 
 # This code runs the test cases to check your work
 if __name__ == "__main__":
-
+    test.testIsVertical()
 
 
     ## Finally, run the simulation to test it manually ##
-    runSimulation(500, 500)
+    # runSimulation(500, 500)
