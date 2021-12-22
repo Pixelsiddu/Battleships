@@ -33,7 +33,8 @@ def makeModel(data):
     data["computerboard"]=emptyGrid(data["rows"],data["cols"])
     data["numberofships"] = 5
     data["computerboard"]=addShips(data["computerboard"] ,data["numberofships"])
-    data["temporarygrid"]= test.testShip()
+    data["temporarygrid"]= []
+    data["usership"] = 0
     return data
 
 
@@ -66,6 +67,11 @@ Parameters: dict mapping strs to values ; mouse event object ; 2D list of ints
 Returns: None
 '''
 def mousePressed(data, event, board):
+    r = getClickedCell(data, event) #[6,2]
+    if board == "user":
+        clickUserBoard(data, r[0], r[1])
+
+
     pass
 
 #### WEEK 1 ####
@@ -167,7 +173,7 @@ def isHorizontal(ship):
     i=0
     if ship[i][0]==ship[i+1][0]==ship[i+2][0]:
         ship.sort()
-        if ship[i+1][0]-ship[i][0]==1 and ship[i+2][0]-ship[i+1][0]==1:
+        if ship[i+1][1]-ship[i][1]==1 and ship[i+2][1]-ship[i+1][1]==1:
             return True
     return False
 
@@ -201,8 +207,9 @@ Parameters: 2D list of ints ; 2D list of ints
 Returns: bool
 '''
 def shipIsValid(grid, ship):
-    if len(ship)==3 and checkShip(grid,ship)==True and (isVertical(ship)==True or isHorizontal(ship)==True):
-        return True
+    if checkShip(grid,ship):
+        if (isVertical(ship)==True or isHorizontal(ship)==True):
+            return True
     return False
 
 
@@ -212,6 +219,14 @@ Parameters: dict mapping strs to values
 Returns: None
 '''
 def placeShip(data):
+    grid=data["userboard"]
+    if shipIsValid(grid, data["temporarygrid"])==True:
+        for i in data["temporarygrid"]:
+            grid[i[0]][i[1]]=SHIP_UNCLICKED
+        data["usership"] = data["usership"] + 1
+    else:
+        print("Ship is not Valid")
+    data["temporarygrid"]=[]
     return
 
 
@@ -221,6 +236,14 @@ Parameters: dict mapping strs to values ; int ; int
 Returns: None
 '''
 def clickUserBoard(data, row, col):
+    g=data["userboard"]
+    if [row,col] in g or data["usership"]==5:
+        return
+    data["temporarygrid"].append([row,col])
+    if len(data["temporarygrid"])==3:
+        placeShip(data)
+    if data["usership"]==5:
+        print("You can start the game")
     return
 
 
@@ -232,6 +255,7 @@ Parameters: dict mapping strs to values ; 2D list of ints ; int ; int ; str
 Returns: None
 '''
 def updateBoard(data, board, row, col, player):
+
     return
 
 
@@ -326,8 +350,7 @@ def runSimulation(w, h):
 
 # This code runs the test cases to check your work
 if __name__ == "__main__":
-    test.testShipIsValid()
 
 
     ## Finally, run the simulation to test it manually ##
-    #runSimulation(500, 500)
+    runSimulation(500, 500)
