@@ -62,6 +62,8 @@ Parameters: dict mapping strs to values ; key event object
 Returns: None
 '''
 def keyPressed(data, event):
+    if event.keysym == "Return":
+        makeModel(data)
     pass
 
 
@@ -248,7 +250,7 @@ Returns: None
 '''
 def clickUserBoard(data, row, col):
     g=data["userboard"]
-    if [row,col] in data["temporarygrid"] or data["usership"]==5:
+    if g[row][col]==SHIP_UNCLICKED or data["usership"]==5:
         return
     data["temporarygrid"].append([row,col]) 
     if len(data["temporarygrid"])==3:
@@ -266,15 +268,16 @@ Parameters: dict mapping strs to values ; 2D list of ints ; int ; int ; str
 Returns: None
 '''
 def updateBoard(data, board, row, col, player):
-        
+
+    if data["currentturns"] == data["maxturns"]:
+        data["winner"] = "draw"   
     if board[row][col] == SHIP_UNCLICKED:
         board[row][col] = SHIP_CLICKED
     elif board[row][col] == EMPTY_UNCLICKED:
         board[row][col] = EMPTY_CLICKED
     if isGameOver(board):
         data["winner"] = player
-    if data["currentturns"] == data["maxturns"]:
-        data["winner"] = "draw"
+    
     
     return 
 
@@ -335,10 +338,13 @@ Returns: None
 def drawGameOver(data, canvas):
     if data["winner"]=="user":
         canvas.create_text(200, 200, text="Congratulations", font=('Arial',30,'bold italic'), anchor="center")
+        canvas.create_text(300, 300, text="Enter to restart game", font=('Arial',25,'bold italic'), anchor="center")
     elif data["winner"]=="comp":
         canvas.create_text(200, 200, text="User Lost", font=('Arial',30,'bold italic'),anchor="center")
+        canvas.create_text(300, 300, text="Enter to restart game", font=('Arial',25,'bold italic'), anchor="center")
     elif data["winner"] == "draw":
         canvas.create_text(200, 200, text="Out of moves-Draw", font=('Arial',30,'bold italic'),anchor="center")
+        canvas.create_text(300, 300, text="Enter to restart game", font=('Arial',25,'bold italic'), anchor="center")
     return
 
 
